@@ -14,8 +14,147 @@
   <p>
     This is the documentation for the Movie API project!!!
     It does things like record your favorite movies and let you see them again.
-    You can also login and save them. So good.
+    You can also login and save them. So good. Let's talk about it.
   </p>
+  <p>
+    Return a list of all movies to the user.<br>
+    Endpoint: '/movies'<br>
+    Method: GET<br>
+    Request Data: none<br>
+    Response data: JSON<br>
+    Example: Navigating to the path '/movies' will return a JSON object like:<br>
+    [
+      {
+        title: 'Hook',
+        description: 'When Captain James Hook kidnaps his children, an adult Peter
+         Pan must return to Neverland and reclaim his youthful spirit in order to
+        challenge his old enemy.',
+        genre: 'Adventure',
+        director: 'Steven Spielberg',
+        imageurl: 'https://m.media-amazon.com/images/M/MV5BNmJjNTQzMjctMmE2NS00ZmYxLWE1NjYtYmRmNjNiMzljOTc3XkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_UX182_CR0,0,182,268_AL_.jpg',
+        featured: 'true'
+      },
+      {
+        title: 'What Dreams May Come',
+        description: 'Chris Nielsen dies in an accident, and enters Heaven. But when he discovers that his beloved wife Annie has killed herself out of grief over the loss, he embarks on an afterlife adventure to reunite with her.',
+        genre: 'Drama'
+        director: 'Vincent Ward',
+        imageurl: 'https://m.media-amazon.com/images/M/MV5BNTg5ZWRjNTctNmMyMi00NTJmLTg3YjktMzJlMDRiYWQ0MjMzL2ltYWdlXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL_.jpg',
+        featured: 'false'
+      },
+      {
+        title: 'Hero',
+        description: 'A defense officer, Nameless, was summoned by the King of Qin regarding his success of terminating three warriors.',
+        genre: 'Adventure',
+        director: 'Yimou Zhang',
+        imageurl: 'https://m.media-amazon.com/images/M/MV5BMWQ2MjQ0OTctMWE1OC00NjZjLTk3ZDAtNTk3NTZiYWMxYTlmXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL_.jpg',
+        featured: 'false'
+      }
+    ]<br><br>
+  </p>
+  <p>
+    Return data (description, genre, director, image URL, whether it's featured or not)
+    about a single movie by title to the user.<br>
+    Endpoint: '/movies/[name]'<br>
+    Method: GET<br>
+    Request data: none<br>
+    Response data: JSON<br>
+    Example: Navigating to '/Hook' will return:<br>
+    {
+      title: 'Hook',
+      description: 'When Captain James Hook kidnaps his children, an adult Peter
+       Pan must return to Neverland and reclaim his youthful spirit in order to
+      challenge his old enemy.',
+      genre: 'Adventure',
+      director: 'Steven Spielberg',
+      image-url: 'https://m.media-amazon.com/images/M/MV5BNmJjNTQzMjctMmE2NS00ZmYxLWE1NjYtYmRmNjNiMzljOTc3XkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_UX182_CR0,0,182,268_AL_.jpg',
+      featured: 'true'
+    }
+  </p>
+  <p>
+    Return Data about a genre<br>
+    Endpoint url: '/[genre]'<br>
+    Method:GET<br>
+    Request data: none<br>
+    Response data: JSON<br>
+    Example: Navigating to '/Adventure' will return:<br>
+    [
+      {
+        title: 'Hook',
+        description: 'When Captain James Hook kidnaps his children, an adult Peter
+         Pan must return to Neverland and reclaim his youthful spirit in order to
+        challenge his old enemy.',
+        genre: 'Adventure',
+        director: 'Steven Spielberg',
+        image-url: 'https://m.media-amazon.com/images/M/MV5BNmJjNTQzMjctMmE2NS00ZmYxLWE1NjYtYmRmNjNiMzljOTc3XkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_UX182_CR0,0,182,268_AL_.jpg',
+        featured: 'true'
+      },
+      {
+        title: 'Hero',
+        description: 'A defense officer, Nameless, was summoned by the King of Qin regarding his success of terminating three warriors.',
+        genre: 'Adventure',
+        director: 'Yimou Zhang',
+        image-url: 'https://m.media-amazon.com/images/M/MV5BMWQ2MjQ0OTctMWE1OC00NjZjLTk3ZDAtNTk3NTZiYWMxYTlmXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL_.jpg',
+        featured: 'false'
+      }
+    ]<br><br>
+  </p>
+  <p>
+    Return data about a director (bio, birth year, death year) by name<br>
+    Endpoint url: '/directors/[director-name]'<br>
+    Method:GET<br>
+    Request data: none<br>
+    Response data: JSON<br>
+    Example: Navigating to '/steven-spielberg' will return:<br>
+    {
+      name: 'Steven Spielberg',
+      bio: 'One of the most influential personalities in the history of cinema, Steven Spielberg is Hollywood's best known director and one of the wealthiest filmmakers in the world. He has an extraordinary number of commercially successful and critically acclaimed credits to his name, either as a director, producer or writer since launching the summer blockbuster with Jaws (1975), and he has done more to define popular film-making since the mid-1970s than anyone else.',
+      birth: '1946',
+      death: ''
+    }<br><br>
+  </p>
+  <p>
+    Allow new users to register<br>
+    Endpoint url: '/register'<br>
+    Method:POST<br>
+    Request data: JSON object with the following keys:<br>
+      {
+        username:
+        firstName:
+        lastName:
+        email:
+      }
+    Response data: plain text response: "User [username] successfully registered."<br>
+  </p>
+  <p>
+    Allow users to update their user info (username)<br>
+    Endpoint url: '/users/[username]/[new-username]'<br>
+    Method:PUT<br>
+    Request data: none
+    Response data: plain text response: "Successfully changed username [username] to [new-username]."<br>
+  </p>
+  <p>
+    Allows users to add a movie to their list of favorites.<br>
+    Endpoint: '/[username]/favorites/[movie-name]'<br>
+    Method: PUT<br>
+    Request Data: none<br>
+    Response data: plaintext response "User [username] has added [movie-name] to their favorites list."<br>
+  </p>
+  <p>
+    Allows users to remove a movie from their list of favorites.<br>
+    Endpoint: '/users/[username]/favorites/[movie-name]'<br>
+    Method: DELETE<br>
+    Request Data: none<br>
+    Response data: plaintext response "User [username] has removed [movie-name] from their favorites list."<br>
+  </p>
+  <p>
+    Allows users to deregister.<br>
+    Endpoint: 'users/[username]'<br>
+    Method: DELETE<br>
+    Request Data: none<br>
+    Response data: plaintext response "User [username]'s information was removed from the API."<br>
+  </p>
+
   <script src="js/scpripts.js"></script>
 </body>
 
