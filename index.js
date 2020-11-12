@@ -2,7 +2,9 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   morgan = require('morgan'),
   mongoose = require('mongoose')
-  Models = require('./models.js');
+  Models = require('./models.js'),
+  cors = require('cors'),
+  { check, validationResult } = require('express-validator');
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -11,6 +13,19 @@ const app = express();
 mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true});
 
 //Middleware functions
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1) {
+      //This occurs if the requesting origin isn't found on the list of allowed origins
+      let message = 'The CORS policy for this application doesn\'t allow access from origin ' + origin;
+      return callback(new Error(message), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 app.use(morgan('common'));
 app.use(express.static('public'));
@@ -115,7 +130,20 @@ app.get('/users/:username',  passport.authenticate('jwt', { session: false }), (
   email: String,
   Birthday: Date
 }*/
-app.post('/register', (req, res) => {
+app.post('/users',
+  [
+    check('username', 'Username must be at least 5 characters').isLength({min:5}),
+    check('username', 'Username must contain only alphanumeric characters (A-Z, 0-9).').isAlphanumeric(),
+    check('password', 'Password is required').not().isEmpty(),
+    check('email', 'Email is not valid').isEmail()
+  ], (req, res) => {
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  let hashedPassword = Users.hashPassword(req.body.Password);
+
   Users.findOne({ username: req.body.username })
     .then((user) => {
       if (user) {
@@ -123,7 +151,7 @@ app.post('/register', (req, res) => {
       } else {
         Users.create({
           username: req.body.username,
-          password: req.body.password,
+          password: hashedPassword,
           email: req.body.email,
           Birthday: req.body.Birthday
         })
@@ -141,12 +169,29 @@ app.post('/register', (req, res) => {
 });
 
 //Changes a user's information
-app.put('/users/:username', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.put('/users/:username',
+  [
+    check('username', 'Username must be at least 5 characters').isLength({min:5}),
+    check('username', 'Username must contain only alphanumeric characters (A-Z, 0-9).').isAlphanumeric(),
+    check('password', 'Password is required').not().isEmpty(),
+    check('email', 'Email is not valid').isEmail()
+  ],
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  let hashedPassword = Users.hashPassword(req.body.Password);
+
+
+
   Users.findOneAndUpdate({ username: req.params.username }, {
     $set:
       {
         username: req.body.username,
-        password: req.body.password,
+        password: hashedPassword,
         email: req.body.email,
         Birthday: req.body.Birthday
       }
@@ -211,6 +256,11 @@ app.delete('/users/:username', passport.authenticate('jwt', { session: false }),
 });
 
 //listen for requests
-app.listen(8080, () => {
-  console.log('Your app is listening on port 8080.');
+// app.listen(8080, () => {
+//   console.log('Your app is listening on port 8080.');
+// });
+
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0', () => {
+  console.log('Listening on Port ' + port);
 });
