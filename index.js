@@ -145,6 +145,7 @@ app.post('/users',
     }
 
     let hashedPassword = Users.hashPassword(req.body.Password);
+    console.log(hashedPassword);
 
     Users.findOne({ username: req.body.username })
       .then((user) => {
