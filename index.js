@@ -36,7 +36,7 @@ app.use((err, req, res, next) => {
 });
 app.use(bodyParser.json());
 
-let auth = require('./auth')(app);
+let auth = require('./auth.js')(app);
 const passport = require('passport');
 require('./passport');
 
