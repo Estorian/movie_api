@@ -2,9 +2,11 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   morgan = require('morgan'),
   mongoose = require('mongoose')
-  Models = require('./models.js'),
-  cors = require('cors'),
-  { check, validationResult } = require('express-validator');
+  Models = require('./models');
+const cors = require('cors');
+const { check, validationResult } = require('express-validator');
+const passport = require('passport');
+require('./passport')
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -36,8 +38,7 @@ app.use((err, req, res, next) => {
 });
 app.use(bodyParser.json());
 
-let auth = require('./auth.js')(app);
-const passport = require('passport');
+let auth = require('./auth')(app);
 require('./passport');
 
 // GET requests
@@ -138,35 +139,35 @@ app.post('/users',
     check('password', 'Password is required').not().isEmpty(),
     check('email', 'Email is not valid').isEmail()
   ], (req, res) => {
-  let errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
 
-  let hashedPassword = Users.hashPassword(req.body.Password);
+    let hashedPassword = Users.hashPassword(req.body.Password);
 
-  Users.findOne({ username: req.body.username })
-    .then((user) => {
-      if (user) {
-        return res.status(400).send(req.body.username + ' already exists.');
-      } else {
-        Users.create({
-          username: req.body.username,
-          password: hashedPassword,
-          email: req.body.email,
-          Birthday: req.body.Birthday
-        })
-        .then((user) =>{res.status(201).json(user) })
-        .catch((error) => {
-          console.error(error);
-          res.status(500).send('Error: ' + error);
-        });
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send('Error: ' + error);
-    });
+    Users.findOne({ username: req.body.username })
+      .then((user) => {
+        if (user) {
+          return res.status(400).send(req.body.username + ' already exists.');
+        } else {
+          Users.create({
+            username: req.body.username,
+            password: hashedPassword,
+            email: req.body.email,
+            Birthday: req.body.Birthday
+          })
+          .then((user) =>{res.status(201).json(user) })
+          .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error + '<br>Could not create user.');
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error + '<br>Could not look up username.');
+      });
 });
 
 //Changes a user's information
