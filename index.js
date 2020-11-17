@@ -1,8 +1,9 @@
 const express = require('express'),
   bodyParser = require('body-parser'),
   morgan = require('morgan'),
-  mongoose = require('mongoose')
+  mongoose = require('mongoose'),
   Models = require('./models');
+
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 const passport = require('passport');
@@ -12,8 +13,8 @@ const Movies = Models.Movie;
 const Users = Models.User;
 const app = express();
 
-// mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true});
-mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true});
 
 //Middleware functions
 let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
@@ -123,7 +124,7 @@ app.get('/users/:username',  passport.authenticate('jwt', { session: false }), (
 });
 
 
-// Add a new user.
+// Register a new user.
 /* User information will be a JSON in the format:
 {
   ID: Integer,
@@ -138,15 +139,16 @@ app.post('/users',
     check('username', 'Username must contain only alphanumeric characters (A-Z, 0-9).').isAlphanumeric(),
     check('password', 'Password is required').not().isEmpty(),
     check('email', 'Email is not valid').isEmail()
-  ], (req, res) => {
+  ],
+  (req, res) => {
+
     let errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
 
-    let hashedPassword = Users.hashPassword(req.body.Password);
-    console.log(hashedPassword);
-
+    let hashedPassword = Users.hashPassword(req.body.password);
     Users.findOne({ username: req.body.username })
       .then((user) => {
         if (user) {
