@@ -208,7 +208,6 @@ app.put('/users/:username',
           username: req.body.username,
           password: hashedPassword,
           email: req.body.email,
-          Birthday: req.body.Birthday
         }
       },
   { new: true },
