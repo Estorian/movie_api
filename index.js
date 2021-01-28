@@ -197,27 +197,25 @@ app.put('/users/:username',
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
-
-    let hashedPassword = Users.hashPassword(req.body.Password);
-
-
-
-    Users.findOneAndUpdate({ username: req.params.username }, {
-      $set:
-        {
-          username: req.body.username,
-          password: hashedPassword,
-          email: req.body.email,
-        }
+    let hashedPassword = Users.hashPassword(req.body.password);
+    Users.findOneAndUpdate(
+      { username: req.params.username },
+      {
+        $set:
+          {
+            username: req.body.username,
+            password: hashedPassword,
+            email: req.body.email,
+          }
       },
-  { new: true },
-  (err, updatedUser) => {
-    if(err) {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
-    } else {
-      res.json(updatedUser);
-    }
+      { new: true },
+      (err, updatedUser) => {
+        if(err) {
+          console.error(err);
+          res.status(500).send('Error: ' + err);
+        } else {
+          res.json(updatedUser);
+        }
   });
 });
 
